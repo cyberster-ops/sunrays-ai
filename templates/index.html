@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sun Rays AI</title>
+<style>
+  :root {
+    --bg-deep: #030712;
+    --bg-panel: rgba(10, 20, 40, 0.75);
+    --neon: #4fd1ff;
+    --neon-soft: #7be3ff;
+    --text: #eaf6ff;
+    --muted: #8fa8c2;
+    --border-glow: rgba(79, 209, 255, 0.5);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 20% 20%, rgba(79,209,255,0.08), transparent 40%),
+      radial-gradient(circle at 80% 0%, rgba(79,209,255,0.08), transparent 40%),
+      radial-gradient(circle at 50% 100%, rgba(79,209,255,0.06), transparent 50%),
+      var(--bg-deep);
+    background-attachment: fixed;
+    display: flex;
+    justify-content: center;
+    padding: 48px 16px;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, #cdeeff 50%, transparent 51%),
+      radial-gradient(1px 1px at 80% 10%, #cdeeff 50%, transparent 51%),
+      radial-gradient(1px 1px at 60% 70%, #cdeeff 50%, transparent 51%),
+      radial-gradient(1px 1px at 30% 80%, #cdeeff 50%, transparent 51%),
+      radial-gradient(1px 1px at 90% 60%, #cdeeff 50%, transparent 51%),
+      radial-gradient(1px 1px at 45% 40%, #cdeeff 50%, transparent 51%);
+    opacity: 0.5;
+    animation: twinkle 4s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.25; }
+    to { opacity: 0.7; }
+  }
+
+  .frame {
+    position: relative;
+    width: 100%;
+    max-width: 760px;
+    border: 1px solid var(--border-glow);
+    border-radius: 18px;
+    background: var(--bg-panel);
+    box-shadow:
+      0 0 0 1px rgba(79,209,255,0.15),
+      0 0 40px rgba(79,209,255,0.15),
+      inset 0 0 60px rgba(79,209,255,0.05);
+    padding: 36px 32px;
+    backdrop-filter: blur(6px);
+    z-index: 1;
+  }
+
+  .bot-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .bot-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px var(--neon-soft));
+  }
+  h1 {
+    font-size: 1.7rem;
+    margin: 0;
+    letter-spacing: 0.5px;
+    color: var(--text);
+    text-shadow: 0 0 12px rgba(79,209,255,0.6);
+  }
+  .subtitle {
+    color: var(--muted);
+    margin: 4px 0 28px 56px;
+    font-size: 0.95rem;
+  }
+
+  .search-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 26px;
+  }
+  input[type="text"] {
+    flex: 1;
+    padding: 15px 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(79,209,255,0.35);
+    background: rgba(4, 12, 28, 0.8);
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+    transition: box-shadow 0.2s, border-color 0.2s;
+  }
+  input[type="text"]:focus {
+    border-color: var(--neon);
+    box-shadow: 0 0 0 3px rgba(79,209,255,0.2), 0 0 18px rgba(79,209,255,0.3);
+  }
+  input[type="text"]::placeholder { color: #5f7690; }
+
+  button {
+    padding: 15px 26px;
+    border-radius: 12px;
+    border: 1px solid var(--neon);
+    background: linear-gradient(135deg, #1c6fa8, #0d3a5c);
+    color: #eaf9ff;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    box-shadow: 0 0 14px rgba(79,209,255,0.35);
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+  button:hover:not(:disabled) {
+    box-shadow: 0 0 22px rgba(79,209,255,0.55);
+    transform: translateY(-1px);
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .card {
+    background: rgba(6, 16, 34, 0.7);
+    border: 1px solid rgba(79,209,255,0.25);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 0 20px rgba(79,209,255,0.08);
+  }
+  .card h2 {
+    font-size: 1rem;
+    margin: 0 0 14px;
+    color: var(--neon-soft);
+    text-shadow: 0 0 8px rgba(79,209,255,0.4);
+  }
+  .snippet {
+    padding: 11px 0;
+    border-bottom: 1px solid rgba(79,209,255,0.12);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: #d7ecfb;
+  }
+  .snippet:last-child { border-bottom: none; }
+  .source {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(79,209,255,0.12);
+  }
+  .source:last-child { border-bottom: none; }
+  .source a {
+    color: var(--neon-soft);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .source a:hover { text-decoration: underline; }
+  .muted { color: var(--muted); font-size: 0.9rem; }
+  .status { color: var(--neon-soft); margin-bottom: 16px; font-size: 0.95rem; }
+  .error { color: #ff8a8a; border-color: rgba(255,138,138,0.3); }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <div class="bot-badge">
+      <svg class="bot-icon" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="30" fill="none" stroke="#4fd1ff" stroke-width="1.5" opacity="0.4"/>
+        <rect x="16" y="20" width="32" height="26" rx="8" fill="none" stroke="#7be3ff" stroke-width="2"/>
+        <circle cx="24" cy="33" r="4" fill="#4fd1ff"/>
+        <circle cx="40" cy="33" r="4" fill="#4fd1ff"/>
+        <line x1="32" y1="10" x2="32" y2="20" stroke="#7be3ff" stroke-width="2"/>
+        <circle cx="32" cy="8" r="3" fill="#4fd1ff"/>
+        <line x1="16" y1="30" x2="8" y2="26" stroke="#7be3ff" stroke-width="2"/>
+        <line x1="48" y1="30" x2="56" y2="26" stroke="#7be3ff" stroke-width="2"/>
+      </svg>
+      <h1>Sun Rays AI</h1>
+    </div>
+    <p class="subtitle">Ask anything — it searches the web and brings back an answer.</p>
+
+    <div class="search-box">
+      <input type="text" id="question" placeholder="Ask me anything..." autofocus />
+      <button id="askBtn">Ask</button>
+    </div>
+
+    <div id="status" class="status"></div>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    const input = document.getElementById("question");
+    const btn = document.getElementById("askBtn");
+    const statusEl = document.getElementById("status");
+    const resultsEl = document.getElementById("results");
+
+    async function ask() {
+      const question = input.value.trim();
+      if (!question) return;
+
+      btn.disabled = true;
+      statusEl.textContent = "🔎 Searching the internet...";
+      resultsEl.innerHTML = "";
+
+      try {
+        const res = await fetch("/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question }),
+        });
+        const data = await res.json();
+
+        statusEl.textContent = "";
+
+        if (data.error) {
+          resultsEl.innerHTML = `<div class="card error">❌ ${data.error}</div>`;
+          return;
+        }
+
+        let html = `<div class="card"><h2>🤖 Answer</h2>`;
+        if (data.sources && data.sources.length > 0) {
+          html += `<p class="muted">Based on internet search results for: "${data.question}"</p>`;
+        }
+        data.snippets.forEach((s) => {
+          html += `<div class="snippet">${s}</div>`;
+        });
+        html += `</div>`;
+
+        if (data.sources && data.sources.length > 0) {
+          html += `<div class="card"><h2>🔗 Sources</h2>`;
+          data.sources.forEach((s, i) => {
+            html += `<div class="source">${i + 1}. <a href="${s.url}" target="_blank" rel="noopener">${s.title}</a></div>`;
+          });
+          html += `</div>`;
+        }
+
+        resultsEl.innerHTML = html;
+      } catch (e) {
+        statusEl.textContent = "";
+        resultsEl.innerHTML = `<div class="card error">❌ Something went wrong: ${e}</div>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    btn.addEventListener("click", ask);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") ask();
+    });
+  </script>
+</body>
+</html>
